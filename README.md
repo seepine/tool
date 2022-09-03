@@ -1,0 +1,41 @@
+## tool
+
+## 依赖
+
+- Latest
+  Version: [![Maven Central](https://img.shields.io/maven-central/v/com.seepine/tool.svg)](https://search.maven.org/search?q=g:com.seepine%20a:tool)
+- Maven:
+
+```xml
+
+<dependency>
+  <groupId>com.seepine</groupId>
+  <artifactId>tool</artifactId>
+  <version>${latest.version}</version>
+</dependency>
+```
+
+## 使用
+
+```java
+class RunTest {
+  public static void main(String[] args) {
+    String str = " hello world ";
+    Run.notBlank(
+      str,
+      (val -> {
+        System.out.println("不为空则进入方法体");
+        System.out.println(val);
+      }));
+    // 不为blank，则返回trim之后的值
+    String strTrim = Run.notBlankAndTrim(str, "参数不能为空");
+    System.out.println("这是trim之后的值：\n" + strTrim);
+
+    Integer age = null;
+    // 符合条件，不会抛出异常
+    Run.isEmpty(age, "年龄必须为null");
+    // 不符合条件，将会抛出异常
+    Run.notEmpty(age, "年龄不能为null");
+  }
+}
+```
