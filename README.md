@@ -17,6 +17,8 @@
 
 ## 使用
 
+### run assert
+
 ```java
 class RunTest {
   public static void main(String[] args) {
@@ -36,6 +38,23 @@ class RunTest {
     Run.isEmpty(age, "年龄必须为null");
     // 不符合条件，将会抛出异常
     Run.notEmpty(age, "年龄不能为null");
+  }
+}
+```
+
+### secure
+
+```java
+class Test {
+  public static void main(String[] args) {
+    RSA rsa = new RSA();
+    // rsa.privateEncrypt(src)
+
+    AES aes = new AES("key");
+    // aes.encrypt(src);
+
+    Base64.encode("data");
+    Base64.decode("data");
   }
 }
 ```
