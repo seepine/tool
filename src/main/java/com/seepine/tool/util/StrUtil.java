@@ -4,7 +4,14 @@ package com.seepine.tool.util;
  * @since 0.0.1
  */
 public class StrUtil {
+  public static final String EMPTY = "";
   public static final String AT = "@";
+  public static final String DOT = ".";
+  public static final String AMP = "&";
+  public static final String COLON = ":";
+  public static final String COMMA = ",";
+  public static final String DASHED = "-";
+  public static final String UNDERLINE = "_";
   /**
    * 是否为空，空定义为null或""
    *
