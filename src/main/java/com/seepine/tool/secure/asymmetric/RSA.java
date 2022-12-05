@@ -1,6 +1,6 @@
 package com.seepine.tool.secure.asymmetric;
 
-import com.seepine.tool.exception.RunException;
+import com.seepine.tool.exception.CryptoException;
 import com.seepine.tool.secure.symmetric.Base64;
 
 import javax.crypto.BadPaddingException;
@@ -82,7 +82,7 @@ public class RSA implements Serializable {
       initCipher();
     } catch (NoSuchAlgorithmException e) {
       e.printStackTrace();
-      throw new RuntimeException(e.getMessage());
+      throw new CryptoException(e.getMessage());
     }
   }
 
@@ -103,7 +103,7 @@ public class RSA implements Serializable {
       initCipher();
     } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
       e.printStackTrace();
-      throw new RuntimeException(e.getMessage());
+      throw new CryptoException(e.getMessage());
     }
   }
   /** 初始化公私钥Cipher */
@@ -118,13 +118,13 @@ public class RSA implements Serializable {
     }
   }
 
-  public Cipher getCipher(int var1, Key key) throws RunException {
+  public Cipher getCipher(int var1, Key key) throws CryptoException {
     try {
       Cipher cipher = Cipher.getInstance(RSA);
       cipher.init(var1, key);
       return cipher;
     } catch (Exception e) {
-      throw new RunException(e.getMessage());
+      throw new CryptoException(e.getMessage());
     }
   }
   /**
@@ -132,9 +132,9 @@ public class RSA implements Serializable {
    *
    * @param origin 明文
    * @return 密文
-   * @throws RunException 异常信息
+   * @throws CryptoException 异常信息
    */
-  public String privateEncrypt(String origin) throws RunException {
+  public String privateEncrypt(String origin) throws CryptoException {
     return encodeDoFinal(
         origin, getCipher(Cipher.ENCRYPT_MODE, privateKey), PRIVATE_ENCODE_BLOCK_SIZE);
   }
@@ -143,9 +143,9 @@ public class RSA implements Serializable {
    *
    * @param secret 密文
    * @return 明文
-   * @throws RunException 异常信息
+   * @throws CryptoException 异常信息
    */
-  public String privateDecrypt(String secret) throws RunException {
+  public String privateDecrypt(String secret) throws CryptoException {
     return decodeDoFinal(
         secret, getCipher(Cipher.DECRYPT_MODE, privateKey), PRIVATE_DECODE_BLOCK_SIZE);
   }
@@ -155,9 +155,9 @@ public class RSA implements Serializable {
    *
    * @param origin 明文
    * @return 密文
-   * @throws RunException 异常信息
+   * @throws CryptoException 异常信息
    */
-  public String publicEncrypt(String origin) throws RunException {
+  public String publicEncrypt(String origin) throws CryptoException {
     return encodeDoFinal(
         origin, getCipher(Cipher.ENCRYPT_MODE, publicKey), PUBLIC_ENCODE_BLOCK_SIZE);
   }
@@ -166,23 +166,25 @@ public class RSA implements Serializable {
    *
    * @param secret 密文
    * @return 明文
-   * @throws RunException 异常信息
+   * @throws CryptoException 异常信息
    */
-  public String publicDecrypt(String secret) throws RunException {
+  public String publicDecrypt(String secret) throws CryptoException {
     return decodeDoFinal(
         secret, getCipher(Cipher.DECRYPT_MODE, publicKey), PUBLIC_DECODE_BLOCK_SIZE);
   }
 
-  private static String encodeDoFinal(String str, Cipher cipher, int maxBlock) throws RunException {
+  private static String encodeDoFinal(String str, Cipher cipher, int maxBlock)
+      throws CryptoException {
     if (str == null) {
-      throw new RunException("加密对象不能为空");
+      throw new CryptoException("加密对象不能为空");
     }
     return Base64.encode(divisionDoFinal(str.getBytes(StandardCharsets.UTF_8), cipher, maxBlock));
   }
 
-  private static String decodeDoFinal(String str, Cipher cipher, int maxBlock) throws RunException {
+  private static String decodeDoFinal(String str, Cipher cipher, int maxBlock)
+      throws CryptoException {
     if (str == null) {
-      throw new RunException("解密对象不能为空");
+      throw new CryptoException("解密对象不能为空");
     }
     return new String(
         divisionDoFinal(Base64.decodeByte(str.getBytes(StandardCharsets.UTF_8)), cipher, maxBlock),
@@ -190,10 +192,10 @@ public class RSA implements Serializable {
   }
 
   private static byte[] divisionDoFinal(byte[] inputArray, Cipher cipher, int maxBlock)
-      throws RunException {
+      throws CryptoException {
     try {
       if (cipher == null) {
-        throw new RunException("公钥或私钥为空时，不能使用其进行加解密");
+        throw new CryptoException("公钥或私钥为空时，不能使用其进行加解密");
       }
       int inputLength = inputArray.length;
       int offSet = 0;
@@ -209,8 +211,7 @@ public class RSA implements Serializable {
       }
       return out.toByteArray();
     } catch (IllegalBlockSizeException | BadPaddingException | IOException e) {
-      e.printStackTrace();
-      throw new RunException(e.getMessage());
+      throw new CryptoException(e.getMessage());
     }
   }
 }

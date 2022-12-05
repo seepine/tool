@@ -1,7 +1,7 @@
 package com.seepine.tool.secure.symmetric;
 
 import com.seepine.tool.Run;
-import com.seepine.tool.exception.RunException;
+import com.seepine.tool.exception.CryptoException;
 import com.seepine.tool.secure.Mode;
 import com.seepine.tool.secure.Padding;
 
@@ -71,13 +71,14 @@ public class AES implements Serializable {
         decryptCipher.init(Cipher.DECRYPT_MODE, keySpec);
       } else {
         Run.isTrue(mode.equals(Mode.CBC), mode.name() + " mode not need iv");
-        IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes()); // CBC模式，需要一个向量iv，可增加加密算法的强度
+        // CBC模式，需要一个向量iv，可增加加密算法的强度
+        IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes());
         encryptCipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
         decryptCipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
       }
     } catch (Exception e) {
       e.printStackTrace();
-      throw new RunException(e.getMessage());
+      throw new CryptoException(e.getMessage());
     }
   }
 
@@ -87,7 +88,7 @@ public class AES implements Serializable {
    * @param src 数据
    * @return 密文
    */
-  public String encrypt(String src) {
+  public String encrypt(String src) throws CryptoException {
     try {
       byte[] dataBytes = src.getBytes();
       int plaintextLength = dataBytes.length;
@@ -99,8 +100,7 @@ public class AES implements Serializable {
       byte[] encrypted = encryptCipher.doFinal(plaintext);
       return Base64.encode(encrypted);
     } catch (Exception e) {
-      e.printStackTrace();
-      return null;
+      throw new CryptoException(e.getMessage());
     }
   }
 
@@ -110,14 +110,13 @@ public class AES implements Serializable {
    * @param ciphertext 密文
    * @return 数据
    */
-  public String decrypt(String ciphertext) {
+  public String decrypt(String ciphertext) throws CryptoException {
     try {
       byte[] encrypted1 = Base64.decodeByte(ciphertext);
       byte[] original = decryptCipher.doFinal(encrypted1);
       return new String(original, StandardCharsets.UTF_8);
     } catch (Exception e) {
-      e.printStackTrace();
-      return null;
+      throw new CryptoException(e.getMessage());
     }
   }
 }
