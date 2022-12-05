@@ -5,6 +5,7 @@ package com.seepine.tool.util;
  */
 public class StrUtil {
   public static final String EMPTY = "";
+  public static final String BLANK = " ";
   public static final String AT = "@";
   public static final String DOT = ".";
   public static final String AMP = "&";
