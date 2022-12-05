@@ -1,6 +1,7 @@
 package com.seepine.tool;
 
 import com.seepine.tool.exception.RunException;
+import com.seepine.tool.function.FunctionN;
 import com.seepine.tool.util.ObjectUtil;
 import com.seepine.tool.util.StrUtil;
 
@@ -9,18 +10,41 @@ import com.seepine.tool.util.StrUtil;
  * @since 0.0.1
  */
 public class Run {
-
   /***
    * 获取值，不为blank则返回str，否则返回defaultStr
    * @param str 值
    * @param defaultStr 默认值
    * @return string
    */
-  public static String require(String str, String defaultStr) {
-    if (StrUtil.isNotBlank(str)) {
-      return str;
-    }
-    return defaultStr;
+  public static String requireNotBlank(String str, String defaultStr) {
+    return StrUtil.isBlank(str) ? defaultStr : str;
+  }
+  /***
+   * 获取值，不为blank则返回str，否则返回()->str
+   * @param str 值
+   * @param func 取值函数
+   * @return string
+   */
+  public static String requireNotBlank(String str, FunctionN<String> func) {
+    return StrUtil.isBlank(str) ? func.apply() : str;
+  }
+  /***
+   * 获取值，不为empty则返回val，否则返回defaultVal
+   * @param val 值
+   * @param defaultVal 默认值
+   * @return string
+   */
+  public static <T> T require(T val, T defaultVal) {
+    return ObjectUtil.isEmpty(val) ? defaultVal : val;
+  }
+  /***
+   * 获取值，不为empty则返回val，否则返回()->str
+   * @param val 值
+   * @param func 取值函数
+   * @return string
+   */
+  public static <T> T require(T val, FunctionN<T> func) {
+    return ObjectUtil.isEmpty(val) ? func.apply() : val;
   }
   /**
    * 必须为empty，否则抛出异常，empty包含null、数组队列空等情况
