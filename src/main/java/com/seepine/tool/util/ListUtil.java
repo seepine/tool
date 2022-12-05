@@ -31,17 +31,16 @@ public class ListUtil {
   /**
    * list map
    *
-   * @param origin prigin
+   * @param origin origin
    * @param mapper mapper
    * @param <T> T
    * @param <R> R
    * @return new list
    */
   public static <T, R> List<R> map(List<T> origin, Function<? super T, ? extends R> mapper) {
-    if (ObjectUtil.isEmpty(origin)) {
-      return new ArrayList<>();
-    }
-    return origin.stream().map(mapper).collect(Collectors.toList());
+    return ObjectUtil.isEmpty(origin)
+        ? new ArrayList<>()
+        : origin.stream().map(mapper).collect(Collectors.toList());
   }
   /**
    * list filter
@@ -52,9 +51,8 @@ public class ListUtil {
    * @return new list
    */
   public static <T> List<T> filter(List<T> origin, Predicate<? super T> predicate) {
-    if (ObjectUtil.isEmpty(origin)) {
-      return new ArrayList<>();
-    }
-    return origin.stream().filter(predicate).collect(Collectors.toList());
+    return ObjectUtil.isEmpty(origin)
+        ? new ArrayList<>()
+        : origin.stream().filter(predicate).collect(Collectors.toList());
   }
 }
