@@ -101,7 +101,10 @@ public class ExpireCache<T> {
     if (delayMillisecond >= 0) {
       EXECUTOR.schedule(
           () -> {
-            map.remove(key);
+            DelayValue<T> delayValue = map.get(key);
+            if (delayValue.isExpired()) {
+              map.remove(key);
+            }
           },
           delayMillisecond,
           TimeUnit.MILLISECONDS);
@@ -113,6 +116,8 @@ public class ExpireCache<T> {
     final T data;
     // -1表示永不过期
     final long delayMillisecond;
+    // 当前时间戳
+    final long timestamp = System.currentTimeMillis();
 
     DelayValue(T data) {
       this.data = data;
@@ -122,6 +127,11 @@ public class ExpireCache<T> {
     DelayValue(T data, long delayMillisecond) {
       this.data = data;
       this.delayMillisecond = delayMillisecond;
+    }
+
+    public boolean isExpired() {
+      return delayMillisecond != FOREVER_FLAG
+          && (System.currentTimeMillis() > delayMillisecond + timestamp);
     }
 
     @Override
