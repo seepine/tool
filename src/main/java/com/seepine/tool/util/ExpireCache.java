@@ -26,6 +26,17 @@ public class ExpireCache<T> {
   public int size() {
     return map.size();
   }
+
+  /**
+   * 主动移除
+   *
+   * @param key key whose mapping is to be removed from the map
+   * @return the previous value associated with key, or null if there was no mapping for key.
+   */
+  public T remove(String key) {
+    DelayValue<T> delayValue = map.remove(key);
+    return delayValue == null ? null : delayValue.data;
+  }
   /**
    * key是否存在
    *
@@ -99,15 +110,16 @@ public class ExpireCache<T> {
 
   private void addClearTimer(String key, long delayMillisecond) {
     if (delayMillisecond >= 0) {
-      EXECUTOR.schedule(
-          () -> {
-            DelayValue<T> delayValue = map.get(key);
-            if (delayValue.isExpired()) {
-              map.remove(key);
-            }
-          },
-          delayMillisecond,
-          TimeUnit.MILLISECONDS);
+      ScheduledFuture<?> future =
+          EXECUTOR.schedule(
+              () -> {
+                DelayValue<T> delayValue = map.get(key);
+                if (delayValue != null && delayValue.isExpired()) {
+                  map.remove(key);
+                }
+              },
+              delayMillisecond,
+              TimeUnit.MILLISECONDS);
     }
   }
 
