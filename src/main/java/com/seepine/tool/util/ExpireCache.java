@@ -35,7 +35,10 @@ public class ExpireCache<T> {
    */
   public T remove(String key) {
     DelayValue<T> delayValue = map.remove(key);
-    return delayValue == null ? null : delayValue.data;
+    if (delayValue == null) {
+      return null;
+    }
+    return delayValue.isExpired() ? null : delayValue.data;
   }
   /**
    * key是否存在
@@ -64,9 +67,17 @@ public class ExpireCache<T> {
    * @param delayMillisecond 过期时间 单位毫秒
    */
   public void put(String key, T value, long delayMillisecond) {
+    if (key == null) {
+      throw new IllegalArgumentException("invalid key, cannot be null");
+    }
+    if (value == null) {
+      throw new IllegalArgumentException("invalid value, cannot be null");
+    }
     if (delayMillisecond > 0 || delayMillisecond == FOREVER_FLAG) {
       map.put(key, new DelayValue<>(value, delayMillisecond));
       addClearTimer(key, delayMillisecond);
+    } else {
+      throw new IllegalArgumentException("invalid delayMillisecond, must be greater than zero");
     }
   }
 
@@ -81,23 +92,23 @@ public class ExpireCache<T> {
     if (Objects.isNull(v)) {
       return null;
     }
-    return v.data;
+    return v.isExpired() ? null : v.data;
   }
 
   /**
-   * 取值的时候判断值是否过期
+   * 取值,若为null则赋值默认值
    *
    * @param key key
-   * @return 值或null（如果key不存在或过期的话）
+   * @return 值
    */
   public T get(String key, FunctionN<T> func) {
     return get(key, func, FOREVER_FLAG);
   }
   /**
-   * 取值的时候判断值是否过期
+   * 取值，若为null则赋值默认值及过期毫秒
    *
    * @param key key
-   * @return 值或null（如果key不存在或过期的话）
+   * @return 值
    */
   public T get(String key, FunctionN<T> func, long delayMillisecond) {
     T value = get(key);
@@ -109,17 +120,16 @@ public class ExpireCache<T> {
   }
 
   private void addClearTimer(String key, long delayMillisecond) {
-    if (delayMillisecond >= 0) {
-      ScheduledFuture<?> future =
-          EXECUTOR.schedule(
-              () -> {
-                DelayValue<T> delayValue = map.get(key);
-                if (delayValue != null && delayValue.isExpired()) {
-                  map.remove(key);
-                }
-              },
-              delayMillisecond,
-              TimeUnit.MILLISECONDS);
+    if (delayMillisecond > 0) {
+      EXECUTOR.schedule(
+          () -> {
+            DelayValue<T> delayValue = map.get(key);
+            if (delayValue != null && delayValue.isExpired()) {
+              map.remove(key);
+            }
+          },
+          delayMillisecond,
+          TimeUnit.MILLISECONDS);
     }
   }
 
@@ -129,11 +139,10 @@ public class ExpireCache<T> {
     // -1表示永不过期
     final long delayMillisecond;
     // 当前时间戳
-    final long timestamp = System.currentTimeMillis();
+    final long timestamp = CurrentTimeMillis.now();
 
     DelayValue(T data) {
-      this.data = data;
-      this.delayMillisecond = FOREVER_FLAG;
+      this(data, FOREVER_FLAG);
     }
 
     DelayValue(T data, long delayMillisecond) {
@@ -143,7 +152,7 @@ public class ExpireCache<T> {
 
     public boolean isExpired() {
       return delayMillisecond != FOREVER_FLAG
-          && (System.currentTimeMillis() > delayMillisecond + timestamp);
+          && (CurrentTimeMillis.now() > delayMillisecond + timestamp);
     }
 
     @Override
