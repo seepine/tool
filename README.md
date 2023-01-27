@@ -58,3 +58,20 @@ class Test {
   }
 }
 ```
+
+### builder
+
+```java
+class BuilderTest {
+  public static void main(String[] args) {
+    User user =
+      Builder.of(User::new).with(User::setName, "zhangSan").with(User::setAge, 27).build();
+    System.out.println(user.toString());
+    // User{name='zhangSan', age=27}
+
+    User user2 = Builder.of(User::new).with(User::setAll, "liSi", 26).build();
+    System.out.println(user2.toString());
+    // User{name='liSi', age=26}
+  }
+}
+```
