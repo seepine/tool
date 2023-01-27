@@ -1,9 +1,8 @@
 package com.seepine.tool.util;
 
-import com.seepine.tool.function.FunctionN;
-
 import java.util.Objects;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 /**
  * 过期缓存
@@ -101,7 +100,7 @@ public class ExpireCache<T> {
    * @param key key
    * @return 值
    */
-  public T get(String key, FunctionN<T> func) {
+  public T get(String key, Supplier<T> func) {
     return get(key, func, FOREVER_FLAG);
   }
   /**
@@ -110,12 +109,12 @@ public class ExpireCache<T> {
    * @param key key
    * @return 值
    */
-  public T get(String key, FunctionN<T> func, long delayMillisecond) {
+  public T get(String key, Supplier<T> func, long delayMillisecond) {
     T value = get(key);
     if (Objects.isNull(value)) {
-      value = func.apply();
+      value = func.get();
     }
-    put(key, func.apply(), delayMillisecond);
+    put(key, func.get(), delayMillisecond);
     return value;
   }
 

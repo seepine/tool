@@ -1,9 +1,10 @@
 package com.seepine.tool;
 
 import com.seepine.tool.exception.RunException;
-import com.seepine.tool.function.FunctionN;
 import com.seepine.tool.util.ObjectUtil;
 import com.seepine.tool.util.StrUtil;
+
+import java.util.function.Supplier;
 
 /**
  * @author seepine
@@ -25,8 +26,8 @@ public class Run {
    * @param func 取值函数
    * @return string
    */
-  public static String requireNotBlank(String str, FunctionN<String> func) {
-    return StrUtil.isBlank(str) ? func.apply() : str;
+  public static String requireNotBlank(String str, Supplier<String> func) {
+    return StrUtil.isBlank(str) ? func.get() : str;
   }
   /***
    * 获取值，不为empty则返回val，否则返回defaultVal
@@ -43,8 +44,8 @@ public class Run {
    * @param func 取值函数
    * @return string
    */
-  public static <T> T require(T val, FunctionN<T> func) {
-    return ObjectUtil.isEmpty(val) ? func.apply() : val;
+  public static <T> T require(T val, Supplier<T> func) {
+    return ObjectUtil.isEmpty(val) ? func.get() : val;
   }
   /**
    * 必须为empty，否则抛出异常，empty包含null、数组队列空等情况
