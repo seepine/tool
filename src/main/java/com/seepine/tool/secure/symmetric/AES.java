@@ -8,17 +8,15 @@ import com.seepine.tool.secure.Padding;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 /**
  * @author seepine
  * @since 0.0.3
  */
-public class AES implements Serializable {
-  private static final long serialVersionUID = 1L;
+public class AES {
   private static final String ALGORITHM = "AES";
-  Cipher encryptCipher;
-  Cipher decryptCipher;
+  private final Cipher encryptCipher;
+  private final Cipher decryptCipher;
   int blockSize;
   /**
    * ECB/PKCS5Padding
@@ -64,7 +62,7 @@ public class AES implements Serializable {
       encryptCipher = Cipher.getInstance(ALGORITHM + "/" + mode.name() + "/" + padding.name());
       decryptCipher = Cipher.getInstance(ALGORITHM + "/" + mode.name() + "/" + padding.name());
       blockSize = encryptCipher.getBlockSize();
-      SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), ALGORITHM);
+      SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), ALGORITHM);
       if (iv == null) {
         Run.isTrue(!mode.equals(Mode.CBC), "CBC mode need iv");
         encryptCipher.init(Cipher.ENCRYPT_MODE, keySpec);
@@ -72,7 +70,7 @@ public class AES implements Serializable {
       } else {
         Run.isTrue(mode.equals(Mode.CBC), mode.name() + " mode not need iv");
         // CBC模式，需要一个向量iv，可增加加密算法的强度
-        IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes());
+        IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes(StandardCharsets.UTF_8));
         encryptCipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
         decryptCipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
       }
@@ -90,7 +88,7 @@ public class AES implements Serializable {
    */
   public String encrypt(String src) throws CryptoException {
     try {
-      byte[] dataBytes = src.getBytes();
+      byte[] dataBytes = src.getBytes(StandardCharsets.UTF_8);
       int plaintextLength = dataBytes.length;
       if (plaintextLength % blockSize != 0) {
         plaintextLength = plaintextLength + (blockSize - (plaintextLength % blockSize));
