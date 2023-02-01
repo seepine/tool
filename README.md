@@ -75,3 +75,25 @@ class BuilderTest {
   }
 }
 ```
+
+### Lock
+
+```java
+class LockTest {
+  public static void main(String[] args) {
+    Lock.sync(1, () -> System.out.println("run end 1"));
+    String str =
+      Lock.sync(
+        1,
+        () -> {
+          String a = "a";
+          return a + "b";
+        });
+
+    // 还可自定义锁的实现，例如增强为分布式锁等
+    Lock.enhance(new LockService() {
+      // ...
+    });
+  }
+}
+```
