@@ -136,4 +136,60 @@ public class Validate {
   public static void nonFalse(boolean condition, @Nonnull String tip) throws ValidateRunException {
     isTrue(condition, tip);
   }
+  /**
+   * a必须大于b
+   *
+   * @param a 对象a
+   * @param b 对象b
+   * @param tip 错误信息
+   * @throws ValidateRunException 校验不通过异常
+   */
+  public static <T extends Comparable<T>> void isGt(T a, T b, @Nonnull String tip)
+      throws ValidateRunException {
+    if (!Objects.gt(a, b)) {
+      throw new ValidateRunException(tip);
+    }
+  }
+  /**
+   * a必须大于等于b，如果a小于b则抛异常
+   *
+   * @param a 对象a
+   * @param b 对象b
+   * @param tip 错误信息
+   * @throws ValidateRunException 校验不通过异常
+   */
+  public static <T extends Comparable<T>> void isGe(T a, T b, @Nonnull String tip)
+      throws ValidateRunException {
+    if (Objects.lt(a, b)) {
+      throw new ValidateRunException(tip);
+    }
+  }
+  /**
+   * a必须小于b
+   *
+   * @param a 对象a
+   * @param b 对象b
+   * @param tip 错误信息
+   * @throws ValidateRunException 校验不通过异常
+   */
+  public static <T extends Comparable<T>> void isLt(T a, T b, @Nonnull String tip)
+      throws ValidateRunException {
+    if (!Objects.lt(a, b)) {
+      throw new ValidateRunException(tip);
+    }
+  }
+  /**
+   * a必须小于等于b，如果a大于b则抛异常
+   *
+   * @param a 对象a
+   * @param b 对象b
+   * @param tip 错误信息
+   * @throws ValidateRunException 校验不通过异常
+   */
+  public static <T extends Comparable<T>> void isLe(T a, T b, @Nonnull String tip)
+      throws ValidateRunException {
+    if (Objects.gt(a, b)) {
+      throw new ValidateRunException(tip);
+    }
+  }
 }
