@@ -1,7 +1,11 @@
 package com.seepine.tool;
 
 import com.seepine.tool.exception.RunException;
+import com.seepine.tool.util.Validate;
 
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 
 /**
@@ -10,10 +14,10 @@ import java.io.Serializable;
  * @param <T> t
  */
 public class R<T> implements Serializable {
-
-  public static final int SUCCESS = 0;
-  public static final int FAIL = 1;
   private static final long serialVersionUID = 1L;
+
+  private static final int SUCCESS = 0;
+  private static final int FAIL = 1;
   /** 错误码 */
   private int code;
   /** 错误信息 */
@@ -45,43 +49,53 @@ public class R<T> implements Serializable {
     this.data = data;
   }
 
-  public static R<Object> ok() {
-    return build(SUCCESS, null, null);
+  public static R<?> ok() {
+    return ok(null, null);
   }
 
-  public static <T> R<T> ok(T data) {
-    return build(SUCCESS, data, null);
+  public static <T> R<T> ok(@Nonnull T data) {
+    return ok(data, null);
+  }
+
+  public static R<?> ok(@Nonnull String msg) {
+    return ok(null, msg);
   }
 
   public static <T> R<T> ok(T data, String msg) {
     return build(SUCCESS, data, msg);
   }
 
-  public static R<Object> fail() {
-    return build(FAIL, null, null);
+  @Nonnull
+  public static R<?> fail() {
+    return fail(null, null);
   }
 
-  public static R<Object> fail(String msg) {
-    return build(FAIL, null, msg);
+  @Nonnull
+  public static R<?> fail(@Nonnull String msg) {
+    return fail(null, msg);
   }
 
-  public static R<Object> fail(int code, String msg) {
+  @Nonnull
+  public static <T> R<T> fail(@Nonnull T data) {
+    return fail(data, null);
+  }
+
+  @Nonnull
+  public static R<?> fail(@Nonnegative int code, @Nullable String msg) {
     if (code == SUCCESS) {
       throw new RunException("fail code cannot be the same as success");
     }
     return build(code, null, msg);
   }
 
-  public static <T> R<T> fail(T data) {
-    return build(FAIL, data, null);
-  }
-
-  public static <T> R<T> fail(T data, String msg) {
+  @Nonnull
+  public static <T> R<T> fail(@Nullable T data, @Nullable String msg) {
     return build(FAIL, data, msg);
   }
 
-  public static <T> R<T> build(int code, T data, String msg) {
-    Run.isTrue(code >= 0, "code must be a positive number");
+  @Nonnull
+  public static <T> R<T> build(@Nonnegative int code, @Nullable T data, @Nullable String msg) {
+    Validate.isTrue(code >= 0, "code must be a positive number");
     R<T> res = new R<>();
     res.setCode(code);
     res.setData(data);
