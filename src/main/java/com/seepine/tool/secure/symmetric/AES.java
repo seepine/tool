@@ -1,9 +1,9 @@
 package com.seepine.tool.secure.symmetric;
 
-import com.seepine.tool.Run;
 import com.seepine.tool.exception.CryptoException;
 import com.seepine.tool.secure.Mode;
 import com.seepine.tool.secure.Padding;
+import com.seepine.tool.util.Validate;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -64,11 +64,11 @@ public class AES {
       blockSize = encryptCipher.getBlockSize();
       SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), ALGORITHM);
       if (iv == null) {
-        Run.isTrue(!mode.equals(Mode.CBC), "CBC mode need iv");
+        Validate.isTrue(!mode.equals(Mode.CBC), "CBC mode need iv");
         encryptCipher.init(Cipher.ENCRYPT_MODE, keySpec);
         decryptCipher.init(Cipher.DECRYPT_MODE, keySpec);
       } else {
-        Run.isTrue(mode.equals(Mode.CBC), mode.name() + " mode not need iv");
+        Validate.isTrue(mode.equals(Mode.CBC), mode.name() + " mode not need iv");
         // CBC模式，需要一个向量iv，可增加加密算法的强度
         IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes(StandardCharsets.UTF_8));
         encryptCipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);

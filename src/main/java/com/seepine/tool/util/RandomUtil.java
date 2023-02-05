@@ -376,8 +376,8 @@ public class RandomUtil {
    * @return 随机字符串
    */
   public static String randomString(String baseString, int length) {
-    if (StrUtil.isEmpty(baseString)) {
-      return StrUtil.EMPTY;
+    if (Objects.isEmpty(baseString)) {
+      return Strings.EMPTY;
     }
     if (length < 1) {
       length = 1;
