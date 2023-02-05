@@ -1,6 +1,6 @@
-package com.seepine.tool.test.util;
+package com.seepine.tool.test.cache;
 
-import com.seepine.tool.util.ExpireCache;
+import com.seepine.tool.cache.ExpireCache;
 
 import java.util.concurrent.TimeUnit;
 

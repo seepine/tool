@@ -1,8 +1,14 @@
-package com.seepine.tool.util;
+package com.seepine.tool.cache;
 
+import com.seepine.tool.function.NonnullSupplier;
+import com.seepine.tool.util.CurrentTimeMillis;
+import com.seepine.tool.util.Validate;
+
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.concurrent.*;
-import java.util.function.Supplier;
 
 /**
  * 过期缓存
@@ -16,7 +22,7 @@ public class ExpireCache<T> {
       Executors.newScheduledThreadPool(
           Math.min(Math.max(Runtime.getRuntime().availableProcessors(), 2), 6));
   /** 永久缓存标记 */
-  public static final long FOREVER_FLAG = -1;
+  public static final long FOREVER_FLAG = 0;
   /**
    * 获取缓存数量
    *
@@ -32,7 +38,8 @@ public class ExpireCache<T> {
    * @param key key whose mapping is to be removed from the map
    * @return the previous value associated with key, or null if there was no mapping for key.
    */
-  public T remove(String key) {
+  @Nullable
+  public T remove(@Nonnull String key) {
     DelayValue<T> delayValue = map.remove(key);
     if (delayValue == null) {
       return null;
@@ -45,7 +52,7 @@ public class ExpireCache<T> {
    * @param key 键
    * @return bool
    */
-  public boolean containsKey(String key) {
+  public boolean containsKey(@Nonnull String key) {
     return map.containsKey(key);
   }
   /**
@@ -54,7 +61,7 @@ public class ExpireCache<T> {
    * @param key 键
    * @param value 值
    */
-  public void put(String key, T value) {
+  public void put(@Nonnull String key, @Nonnull T value) {
     put(key, value, FOREVER_FLAG);
   }
 
@@ -63,21 +70,15 @@ public class ExpireCache<T> {
    *
    * @param key 键
    * @param value 值
-   * @param delayMillisecond 过期时间 单位毫秒
+   * @param delayMillisecond 过期时间，单位毫秒
    */
-  public void put(String key, T value, long delayMillisecond) {
-    if (key == null) {
-      throw new IllegalArgumentException("invalid key, cannot be null");
-    }
-    if (value == null) {
-      throw new IllegalArgumentException("invalid value, cannot be null");
-    }
-    if (delayMillisecond > 0 || delayMillisecond == FOREVER_FLAG) {
-      map.put(key, new DelayValue<>(value, delayMillisecond));
-      addClearTimer(key, delayMillisecond);
-    } else {
-      throw new IllegalArgumentException("invalid delayMillisecond, must be greater than zero");
-    }
+  public void put(@Nonnull String key, @Nonnull T value, @Nonnegative long delayMillisecond) {
+    Validate.nonBlank(key, "invalid key, cannot be blank");
+    Validate.nonNull(value, "invalid value, cannot be null");
+    Validate.isGe(
+        delayMillisecond, FOREVER_FLAG, "invalid delayMillisecond, must be greater than zero");
+    map.put(key, new DelayValue<>(value, delayMillisecond));
+    addClearTimer(key, delayMillisecond);
   }
 
   /**
@@ -86,21 +87,32 @@ public class ExpireCache<T> {
    * @param key key
    * @return 值或null（如果key不存在或过期的话）
    */
-  public T get(String key) {
+  @Nullable
+  public T get(@Nonnull String key) {
     DelayValue<T> v = map.get(key);
     if (Objects.isNull(v)) {
       return null;
     }
     return v.isExpired() ? null : v.data;
   }
-
   /**
    * 取值,若为null则赋值默认值
    *
    * @param key key
    * @return 值
    */
-  public T get(String key, Supplier<T> func) {
+  @Nonnull
+  public T get(@Nonnull String key, @Nonnull T defaultValue) {
+    return get(key, () -> defaultValue, FOREVER_FLAG);
+  }
+  /**
+   * 取值,若为null则赋值默认值
+   *
+   * @param key key
+   * @return 值
+   */
+  @Nonnull
+  public T get(@Nonnull String key, @Nonnull NonnullSupplier<T> func) {
     return get(key, func, FOREVER_FLAG);
   }
   /**
@@ -109,7 +121,9 @@ public class ExpireCache<T> {
    * @param key key
    * @return 值
    */
-  public T get(String key, Supplier<T> func, long delayMillisecond) {
+  @Nonnull
+  public T get(
+      @Nonnull String key, @Nonnull NonnullSupplier<T> func, @Nonnegative long delayMillisecond) {
     T value = get(key);
     if (Objects.isNull(value)) {
       value = func.get();
@@ -118,7 +132,7 @@ public class ExpireCache<T> {
     return value;
   }
 
-  private void addClearTimer(String key, long delayMillisecond) {
+  private void addClearTimer(@Nonnull String key, @Nonnegative long delayMillisecond) {
     if (delayMillisecond > 0) {
       EXECUTOR.schedule(
           () -> {
@@ -140,11 +154,11 @@ public class ExpireCache<T> {
     // 当前时间戳
     final long timestamp = CurrentTimeMillis.now();
 
-    DelayValue(T data) {
+    DelayValue(@Nonnull T data) {
       this(data, FOREVER_FLAG);
     }
 
-    DelayValue(T data, long delayMillisecond) {
+    DelayValue(@Nonnull T data, @Nonnegative long delayMillisecond) {
       this.data = data;
       this.delayMillisecond = delayMillisecond;
     }
