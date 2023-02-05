@@ -3,6 +3,8 @@ package com.seepine.tool.test.lock;
 import com.seepine.tool.lock.Lock;
 import com.seepine.tool.lock.LockService;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public class LockTest {
@@ -27,8 +29,9 @@ public class LockTest {
   }
 
   static class LockRedisImpl implements LockService {
+    @Nullable
     @Override
-    public <T> T lock(String key, Supplier<T> supplier) {
+    public <T> T lock(@Nonnull String key, @Nonnull Supplier<T> supplier) {
       // 此处可用redis实现分布式锁等，本demo仅简单展示用法
       synchronized (key.intern()) {
         try {

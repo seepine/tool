@@ -1,5 +1,7 @@
 package com.seepine.tool.lock;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 /**
@@ -15,5 +17,6 @@ public interface LockService {
    * @return supplier.get()
    * @param <T> 供应者泛型
    */
-  <T> T lock(String key, Supplier<T> supplier);
+  @Nullable
+  <T> T lock(@Nonnull String key, @Nonnull Supplier<T> supplier);
 }
