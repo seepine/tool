@@ -1,6 +1,9 @@
 package com.seepine.tool.util;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -19,7 +22,8 @@ public class ListUtil {
    * @return List<T>
    * @param <T> 结果类
    */
-  public static <T> List<T> castList(Object obj, Class<T> clazz) {
+  @Nonnull
+  public static <T> List<T> castList(@Nonnull Object obj, @Nonnull Class<T> clazz) {
     List<T> result = new ArrayList<>();
     if (obj instanceof List<?>) {
       for (Object o : (List<?>) obj) {
@@ -37,8 +41,10 @@ public class ListUtil {
    * @param <R> R
    * @return new list
    */
-  public static <T, R> List<R> map(List<T> origin, Function<? super T, ? extends R> mapper) {
-    return ObjectUtil.isEmpty(origin)
+  @Nonnull
+  public static <T, R> List<R> map(
+      @Nullable List<T> origin, @Nonnull Function<? super T, ? extends R> mapper) {
+    return origin == null || Objects.isEmpty(origin)
         ? new ArrayList<>()
         : origin.stream().map(mapper).collect(Collectors.toList());
   }
@@ -50,9 +56,27 @@ public class ListUtil {
    * @param <T> T
    * @return new list
    */
-  public static <T> List<T> filter(List<T> origin, Predicate<? super T> predicate) {
-    return ObjectUtil.isEmpty(origin)
+  @Nonnull
+  public static <T> List<T> filter(
+      @Nullable List<T> origin, @Nonnull Predicate<? super T> predicate) {
+    return origin == null || Objects.isEmpty(origin)
         ? new ArrayList<>()
         : origin.stream().filter(predicate).collect(Collectors.toList());
+  }
+
+  /**
+   * 将数组转化为list
+   *
+   * @param arr 数组
+   * @return list
+   * @param <T> T
+   * @since 0.2.0
+   */
+  @Nonnull
+  @SuppressWarnings("unchecked")
+  public static <T> List<T> fromArray(@Nonnull T... arr) {
+    List<T> list = new ArrayList<>();
+    Collections.addAll(list, arr);
+    return list;
   }
 }
