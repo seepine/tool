@@ -50,10 +50,18 @@ public class Objects {
   /**
    * 计算多个对象hash值
    *
+   * <p>与java.util.Objects.hash不同的是，当对象只有一个时，直接返回该对象的hash值
+   *
    * @param values 对象数组
    * @return hash值
    */
   public static int hashCode(@Nullable Object... values) {
+    if (values == null || values.length == 0) {
+      return 0;
+    }
+    if (values.length == 1) {
+      return hashCode(values[0]);
+    }
     return java.util.Objects.hash(values);
   }
   /**
