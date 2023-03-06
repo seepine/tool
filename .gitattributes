@@ -1,0 +1,36 @@
+* text=auto
+
+# Force the following filetypes to have unix eols, so Windows does not break them
+*.* text eol=lf
+
+# Separate configuration for files without suffix
+LICENSE text eol=lf
+Dockerfile text eol=lf
+pre-commit text eol=lf
+commit-msg text eol=lf
+mvnw text eol=lf
+
+# These files are binary and should be left untouched
+# (binary is a macro for -text -diff)
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+
+*.pdf binary
+*.doc binary
+*.docx binary
+*.ppt binary
+*.pptx binary
+*.xls binary
+*.xlsx binary
+
+*.exe binary
+*.jar binary
+
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.otf binary
+# Add more binary...
