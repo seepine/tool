@@ -145,4 +145,17 @@
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>tencent</id>
+			<url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>tencent</id>
+			<url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
