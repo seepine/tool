@@ -3,6 +3,7 @@ package com.seepine.tool.secure.symmetric;
 import com.seepine.tool.exception.CryptoException;
 import com.seepine.tool.secure.Mode;
 import com.seepine.tool.secure.Padding;
+import com.seepine.tool.util.Strings;
 import com.seepine.tool.util.Validate;
 
 import javax.crypto.Cipher;
@@ -14,7 +15,6 @@ import java.nio.charset.StandardCharsets;
  * @since 0.0.3
  */
 public class AES {
-  private static final String ALGORITHM = "AES";
   private final Cipher encryptCipher;
   private final Cipher decryptCipher;
   int blockSize;
@@ -59,10 +59,10 @@ public class AES {
    */
   public AES(Mode mode, Padding padding, String key, String iv) {
     try {
-      encryptCipher = Cipher.getInstance(ALGORITHM + "/" + mode.name() + "/" + padding.name());
-      decryptCipher = Cipher.getInstance(ALGORITHM + "/" + mode.name() + "/" + padding.name());
+      encryptCipher = Cipher.getInstance(Strings.AES + "/" + mode.name() + "/" + padding.name());
+      decryptCipher = Cipher.getInstance(Strings.AES + "/" + mode.name() + "/" + padding.name());
       blockSize = encryptCipher.getBlockSize();
-      SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), ALGORITHM);
+      SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), Strings.AES);
       if (iv == null) {
         Validate.isTrue(!mode.equals(Mode.CBC), "CBC mode need iv");
         encryptCipher.init(Cipher.ENCRYPT_MODE, keySpec);

@@ -2,6 +2,7 @@ package com.seepine.tool.secure.asymmetric;
 
 import com.seepine.tool.exception.CryptoException;
 import com.seepine.tool.secure.symmetric.Base64;
+import com.seepine.tool.util.Strings;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -25,7 +26,6 @@ import java.security.spec.X509EncodedKeySpec;
  */
 public class RSA implements Serializable {
   private static final long serialVersionUID = 1L;
-  private static final String RSA = "RSA";
   RSAPublicKey publicKey;
   String publicKeyBase64;
 
@@ -72,7 +72,7 @@ public class RSA implements Serializable {
   /** 生成公私密钥 */
   private void genKeyPair(int keySize) {
     try {
-      KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(RSA);
+      KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(Strings.RSA);
       keyPairGen.initialize(keySize, new SecureRandom());
       KeyPair keyPair = keyPairGen.generateKeyPair();
       publicKey = (RSAPublicKey) keyPair.getPublic();
@@ -91,7 +91,7 @@ public class RSA implements Serializable {
       if (publicKeyBase64 != null) {
         publicKey =
             (RSAPublicKey)
-                KeyFactory.getInstance(RSA)
+                KeyFactory.getInstance(Strings.RSA)
                     .generatePublic(new X509EncodedKeySpec(Base64.decodeByte(publicKeyBase64)));
       }
       if (privateKeyBase64 != null) {
@@ -120,7 +120,7 @@ public class RSA implements Serializable {
 
   public Cipher getCipher(int var1, Key key) throws CryptoException {
     try {
-      Cipher cipher = Cipher.getInstance(RSA);
+      Cipher cipher = Cipher.getInstance(Strings.RSA);
       cipher.init(var1, key);
       return cipher;
     } catch (Exception e) {
