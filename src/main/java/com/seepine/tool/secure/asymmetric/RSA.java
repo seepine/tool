@@ -26,6 +26,11 @@ import java.security.spec.X509EncodedKeySpec;
  */
 public class RSA implements Serializable {
   private static final long serialVersionUID = 1L;
+
+  String charset = "UTF-8";
+
+  String signAlgorithm = "MD5withRSA";
+
   RSAPublicKey publicKey;
   String publicKeyBase64;
 
@@ -51,6 +56,13 @@ public class RSA implements Serializable {
     initKey();
   }
 
+  public void setCharset(String charset) {
+    this.charset = charset;
+  }
+
+  public void setSignAlgorithm(String signAlgorithm) {
+    this.signAlgorithm = signAlgorithm;
+  }
   /**
    * 获取公钥base64
    *
@@ -97,7 +109,7 @@ public class RSA implements Serializable {
       if (privateKeyBase64 != null) {
         privateKey =
             (RSAPrivateKey)
-                KeyFactory.getInstance("RSA")
+                KeyFactory.getInstance(Strings.RSA)
                     .generatePrivate(new PKCS8EncodedKeySpec(Base64.decodeByte(privateKeyBase64)));
       }
       initCipher();
@@ -211,6 +223,45 @@ public class RSA implements Serializable {
       }
       return out.toByteArray();
     } catch (IllegalBlockSizeException | BadPaddingException | IOException e) {
+      throw new CryptoException(e.getMessage());
+    }
+  }
+
+  /**
+   * 用私钥加签
+   *
+   * @param content 加签明文
+   * @return 加签base64值
+   */
+  public String sign(String content) {
+    try {
+      byte[] data = content.getBytes(charset);
+      Signature signature = Signature.getInstance(signAlgorithm);
+      signature.initSign(privateKey);
+      signature.update(data);
+      return Base64.encode(signature.sign());
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new CryptoException(e.getMessage());
+    }
+  }
+
+  /**
+   * 用公钥验签
+   *
+   * @param content 验签明文
+   * @param sign 已加签的密文
+   * @return true/false
+   */
+  public boolean verify(String content, String sign) {
+    try {
+      byte[] data = content.getBytes(charset);
+      Signature signature = Signature.getInstance(signAlgorithm);
+      signature.initVerify(publicKey);
+      signature.update(data);
+      return signature.verify(Base64.decodeByte(sign));
+    } catch (Exception e) {
+      e.printStackTrace();
       throw new CryptoException(e.getMessage());
     }
   }
