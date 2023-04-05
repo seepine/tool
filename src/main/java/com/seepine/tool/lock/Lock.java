@@ -1,7 +1,6 @@
 package com.seepine.tool.lock;
 
 import com.seepine.tool.function.NonnullSupplier;
-import com.seepine.tool.function.VoidSupplier;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
@@ -29,13 +28,13 @@ public class Lock {
    * 锁定运行
    *
    * @param key 锁值
-   * @param voidSupplier 执行方法
+   * @param action 执行方法
    */
-  public static void sync(@Nonnull Object key, @Nonnull VoidSupplier voidSupplier) {
+  public static void sync(@Nonnull Object key, @Nonnull Runnable action) {
     sync(
         key,
         () -> {
-          voidSupplier.run();
+          action.run();
           return null;
         });
   }
