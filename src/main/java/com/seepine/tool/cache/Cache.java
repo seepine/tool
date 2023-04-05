@@ -2,11 +2,12 @@ package com.seepine.tool.cache;
 
 import com.seepine.tool.function.NonnullSupplier;
 import com.seepine.tool.lock.Lock;
+import com.seepine.tool.util.Objects;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * 缓存工具类
@@ -40,7 +41,28 @@ public class Cache {
     Object value = cache.get(key);
     return Objects.isNull(value) ? null : (T) value;
   }
-
+  /**
+   * 获取缓存
+   *
+   * @param key key
+   * @param defaultValue 当缓存为null时，将会返回该值并保存到缓存中
+   * @return 值
+   */
+  @Nonnull
+  public static <T> T get(@Nonnull String key, @Nonnull T defaultValue) {
+    return get(key, () -> defaultValue);
+  }
+  /**
+   * 获取缓存
+   *
+   * @param key key
+   * @param supplier 当缓存为null时，将会返回该值并保存到缓存中
+   * @return 值
+   */
+  @Nonnull
+  public static <T> T get(@Nonnull String key, @Nonnull NonnullSupplier<T> supplier) {
+    return get(key, supplier, ExpireCache.FOREVER_FLAG);
+  }
   /**
    * 获取缓存
    *
@@ -49,6 +71,7 @@ public class Cache {
    * @param delayMillisecond 过期时间，毫秒
    * @return 值
    */
+  @Nonnull
   public static <T> T get(
       @Nonnull String key, @Nonnull T defaultValue, @Nonnegative long delayMillisecond) {
     return get(key, () -> defaultValue, delayMillisecond);
@@ -73,6 +96,35 @@ public class Cache {
           if (Objects.isNull(value)) {
             value = supplier.get();
             set(key, value, delayMillisecond);
+          }
+          return value;
+        });
+  }
+  /**
+   * 获取缓存，提供获取供应者，且当供应者提供值时，才缓存
+   *
+   * <p>String str = Cache.getIfPresent("cacheKey", ()-> null , 5000) // 返回null，且不会缓存
+   *
+   * <p>String str = Cache.getIfPresent("cacheKey", ()-> "cacheValue" , 5000) // 返回cacheValue，且会缓存值
+   *
+   * @param key key
+   * @param supplier 当缓存为null时，将会返回该值并保存到缓存中
+   * @param delayMillisecond 过期时间，毫秒
+   * @return 值
+   * @since 2.2.4
+   */
+  @Nullable
+  public static <T> T getIfPresent(
+      @Nonnull String key, @Nonnull Supplier<T> supplier, @Nonnegative long delayMillisecond) {
+    return Lock.sync(
+        key,
+        () -> {
+          T value = get(key);
+          if (Objects.isNull(value)) {
+            value = supplier.get();
+            if (Objects.nonNull(value)) {
+              set(key, value, delayMillisecond);
+            }
           }
           return value;
         });
