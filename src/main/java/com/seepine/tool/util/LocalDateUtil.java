@@ -2,8 +2,9 @@ package com.seepine.tool.util;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
 /**
+ * 日期工具类
+ *
  * @author seepine
  * @since 0.0.1
  */
@@ -52,7 +53,34 @@ public class LocalDateUtil {
     return isLt(b, a);
   }
 
+  /**
+   * 使用yyyy-MM-dd格式化
+   *
+   * @param date 日期
+   * @return 2020-11-11
+   */
   public static String format(LocalDate date) {
     return date.format(DF);
+  }
+
+  /**
+   * 使用dateTimeFormatter格式化
+   *
+   * @param date 日期
+   * @return dateTimeFormatter配置的格式
+   * @since 0.2.5
+   */
+  public static String format(LocalDate date, DateTimeFormatter dateTimeFormatter) {
+    return date.format(dateTimeFormatter);
+  }
+  /**
+   * 使用pattern格式化，例如yyyyMMdd
+   *
+   * @param date 日期
+   * @return pattern配置的格式
+   * @since 0.2.5
+   */
+  public static String format(LocalDate date, String pattern) {
+    return date.format(DateTimeFormatter.ofPattern(pattern));
   }
 }
