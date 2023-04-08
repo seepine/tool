@@ -1,21 +1,29 @@
 ## tool
 
-## 依赖
+## 一、安装
 
-- Latest
-  Version: [![Maven Central](https://img.shields.io/maven-central/v/com.seepine/tool.svg)](https://search.maven.org/search?q=g:com.seepine%20a:tool)
-- Maven:
+#### LatestVersion
+
+[![Maven Central](https://img.shields.io/maven-central/v/com.seepine/tool.svg)](https://search.maven.org/search?q=g:com.seepine%20a:tool)
+
+#### Maven
 
 ```xml
 
 <dependency>
   <groupId>com.seepine</groupId>
   <artifactId>tool</artifactId>
-  <version>${latest.version}</version>
+  <version>${latestVersion}</version>
 </dependency>
 ```
 
-## 使用
+#### Gradle
+
+```gradle
+implementation("com.seepine:tool:${lastVersion}")
+```
+
+## 二、用法
 
 ### run
 
