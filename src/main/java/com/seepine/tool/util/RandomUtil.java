@@ -92,8 +92,7 @@ public class RandomUtil {
     try {
       random = SecureRandom.getInstance("SHA1PRNG");
     } catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
-      throw new RunException(e.getMessage());
+      throw new RunException(e);
     }
     if (null != seed) {
       random.setSeed(seed);
@@ -112,8 +111,7 @@ public class RandomUtil {
     try {
       return SecureRandom.getInstanceStrong();
     } catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
-      throw new RunException(e.getMessage());
+      throw new RunException(e);
     }
   }
 

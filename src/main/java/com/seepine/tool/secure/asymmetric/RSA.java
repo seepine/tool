@@ -93,8 +93,7 @@ public class RSA implements Serializable {
       privateKeyBase64 = Base64.encode((privateKey.getEncoded()));
       initCipher();
     } catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
-      throw new CryptoException(e.getMessage());
+      throw new CryptoException(e);
     }
   }
 
@@ -114,8 +113,7 @@ public class RSA implements Serializable {
       }
       initCipher();
     } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-      e.printStackTrace();
-      throw new CryptoException(e.getMessage());
+      throw new CryptoException(e);
     }
   }
   /** 初始化公私钥Cipher */
@@ -136,7 +134,7 @@ public class RSA implements Serializable {
       cipher.init(var1, key);
       return cipher;
     } catch (Exception e) {
-      throw new CryptoException(e.getMessage());
+      throw new CryptoException(e);
     }
   }
   /**
@@ -223,7 +221,7 @@ public class RSA implements Serializable {
       }
       return out.toByteArray();
     } catch (IllegalBlockSizeException | BadPaddingException | IOException e) {
-      throw new CryptoException(e.getMessage());
+      throw new CryptoException(e);
     }
   }
 
@@ -241,8 +239,7 @@ public class RSA implements Serializable {
       signature.update(data);
       return Base64.encode(signature.sign());
     } catch (Exception e) {
-      e.printStackTrace();
-      throw new CryptoException(e.getMessage());
+      throw new CryptoException(e);
     }
   }
 
@@ -261,8 +258,7 @@ public class RSA implements Serializable {
       signature.update(data);
       return signature.verify(Base64.decodeByte(sign));
     } catch (Exception e) {
-      e.printStackTrace();
-      throw new CryptoException(e.getMessage());
+      throw new CryptoException(e);
     }
   }
 }

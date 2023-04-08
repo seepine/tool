@@ -75,8 +75,7 @@ public class AES {
         decryptCipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
       }
     } catch (Exception e) {
-      e.printStackTrace();
-      throw new CryptoException(e.getMessage());
+      throw new CryptoException(e);
     }
   }
 
@@ -98,7 +97,7 @@ public class AES {
       byte[] encrypted = encryptCipher.doFinal(plaintext);
       return Base64.encode(encrypted);
     } catch (Exception e) {
-      throw new CryptoException(e.getMessage());
+      throw new CryptoException(e);
     }
   }
 
@@ -114,7 +113,7 @@ public class AES {
       byte[] original = decryptCipher.doFinal(encrypted1);
       return new String(original, StandardCharsets.UTF_8);
     } catch (Exception e) {
-      throw new CryptoException(e.getMessage());
+      throw new CryptoException(e);
     }
   }
 }

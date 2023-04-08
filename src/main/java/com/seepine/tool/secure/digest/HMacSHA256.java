@@ -49,8 +49,7 @@ public class HMacSHA256 {
       hmacSha256.init(new SecretKeySpec(keyBytes, 0, keyBytes.length, algorithm));
       return hmacSha256.doFinal(strBytes);
     } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-      e.printStackTrace();
-      throw new CryptoException(e.getMessage());
+      throw new CryptoException(e);
     }
   }
 

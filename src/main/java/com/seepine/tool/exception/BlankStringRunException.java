@@ -8,10 +8,6 @@ package com.seepine.tool.exception;
  */
 public class BlankStringRunException extends RunException {
 
-  public BlankStringRunException() {
-    super(null);
-  }
-
   public BlankStringRunException(String msg) {
     super(msg);
   }

@@ -89,8 +89,7 @@ public class MD5 {
       }
       return md5.digest();
     } catch (Exception e) {
-      e.printStackTrace();
-      throw new CryptoException(e.getMessage());
+      throw new CryptoException(e);
     }
   }
 }
