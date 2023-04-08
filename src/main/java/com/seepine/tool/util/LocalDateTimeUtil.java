@@ -80,4 +80,27 @@ public class LocalDateTimeUtil {
   public static String format(LocalDateTime date, String pattern) {
     return date.format(DateTimeFormatter.ofPattern(pattern));
   }
+
+  /**
+   * 字符串转对象,使用默认yyyy-MM-dd HH:mm:ss格式
+   *
+   * @param text 2023/01/01 12:12:12
+   * @return 对象
+   * @since 0.2.6
+   */
+  public static LocalDateTime parse(CharSequence text) {
+    return LocalDateTime.parse(text, DF);
+  }
+
+  /**
+   * 字符串转对象
+   *
+   * @param text 2023/01/01 12:12:12
+   * @param pattern yyyy/MM/dd HH:mm:ss
+   * @return 对象
+   * @since 0.2.6
+   */
+  public static LocalDateTime parse(CharSequence text, String pattern) {
+    return LocalDateTime.parse(text, DateTimeFormatter.ofPattern(pattern));
+  }
 }

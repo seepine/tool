@@ -83,4 +83,27 @@ public class LocalDateUtil {
   public static String format(LocalDate date, String pattern) {
     return date.format(DateTimeFormatter.ofPattern(pattern));
   }
+
+  /**
+   * 字符串转对象,使用默认yyyy-MM-dd格式
+   *
+   * @param text 2023-01-01
+   * @return 对象
+   * @since 0.2.6
+   */
+  public static LocalDate parse(CharSequence text) {
+    return LocalDate.parse(text, DF);
+  }
+
+  /**
+   * 字符串转对象
+   *
+   * @param text 2023/01/01
+   * @param pattern yyyy/MM/dd
+   * @return 对象
+   * @since 0.2.6
+   */
+  public static LocalDate parse(CharSequence text, String pattern) {
+    return LocalDate.parse(text, DateTimeFormatter.ofPattern(pattern));
+  }
 }
