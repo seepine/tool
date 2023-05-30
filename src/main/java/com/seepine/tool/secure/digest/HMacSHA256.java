@@ -2,7 +2,6 @@ package com.seepine.tool.secure.digest;
 
 import com.seepine.tool.exception.CryptoException;
 import com.seepine.tool.util.Bytes;
-import com.seepine.tool.util.Strings;
 
 import javax.annotation.Nonnull;
 import javax.crypto.Mac;
@@ -18,6 +17,8 @@ import java.security.NoSuchAlgorithmException;
  * @since 0.2.2
  */
 public class HMacSHA256 {
+  public static final String H_MAC_SHA256 = "HmacSHA256";
+
   byte[] keyBytes;
 
   public HMacSHA256(@Nonnull String secret) {
@@ -42,7 +43,7 @@ public class HMacSHA256 {
    */
   @Nonnull
   public byte[] digestByte(@Nonnull byte[] strBytes) {
-    String algorithm = Strings.H_MAC_SHA256;
+    String algorithm = H_MAC_SHA256;
     Mac hmacSha256;
     try {
       hmacSha256 = Mac.getInstance(algorithm);
