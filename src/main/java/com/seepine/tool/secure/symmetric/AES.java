@@ -18,6 +18,7 @@ public class AES {
   private final Cipher encryptCipher;
   private final Cipher decryptCipher;
   int blockSize;
+  boolean hasIv;
   /**
    * ECB/PKCS5Padding
    *
@@ -63,6 +64,7 @@ public class AES {
       decryptCipher = Cipher.getInstance(Strings.AES + "/" + mode.name() + "/" + padding.name());
       blockSize = encryptCipher.getBlockSize();
       SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), Strings.AES);
+      this.hasIv = iv != null;
       if (iv == null) {
         Validate.isTrue(!mode.equals(Mode.CBC), "CBC mode need iv");
         encryptCipher.init(Cipher.ENCRYPT_MODE, keySpec);
@@ -88,14 +90,19 @@ public class AES {
   public String encrypt(String src) throws CryptoException {
     try {
       byte[] dataBytes = src.getBytes(StandardCharsets.UTF_8);
-      int plaintextLength = dataBytes.length;
-      if (plaintextLength % blockSize != 0) {
-        plaintextLength = plaintextLength + (blockSize - (plaintextLength % blockSize));
+      if (hasIv) {
+        byte[] encrypted = encryptCipher.doFinal(dataBytes);
+        return Base64.encode(encrypted);
+      } else {
+        int plaintextLength = dataBytes.length;
+        if (plaintextLength % blockSize != 0) {
+          plaintextLength = plaintextLength + (blockSize - (plaintextLength % blockSize));
+        }
+        byte[] plaintext = new byte[plaintextLength];
+        System.arraycopy(dataBytes, 0, plaintext, 0, dataBytes.length);
+        byte[] encrypted = encryptCipher.doFinal(plaintext);
+        return Base64.encode(encrypted);
       }
-      byte[] plaintext = new byte[plaintextLength];
-      System.arraycopy(dataBytes, 0, plaintext, 0, dataBytes.length);
-      byte[] encrypted = encryptCipher.doFinal(plaintext);
-      return Base64.encode(encrypted);
     } catch (Exception e) {
       throw new CryptoException(e);
     }
@@ -111,7 +118,7 @@ public class AES {
     try {
       byte[] encrypted1 = Base64.decodeByte(ciphertext);
       byte[] original = decryptCipher.doFinal(encrypted1);
-      return new String(original, StandardCharsets.UTF_8);
+      return Strings.toString(original);
     } catch (Exception e) {
       throw new CryptoException(e);
     }
