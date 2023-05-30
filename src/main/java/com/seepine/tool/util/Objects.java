@@ -244,16 +244,7 @@ public class Objects {
    * @return 是否为空白
    */
   public static boolean isBlank(@Nullable CharSequence str) {
-    if (str == null) {
-      return true;
-    }
-    final int length = str.length();
-    for (int i = 0; i < length; i++) {
-      if (!isBlankChar(str.charAt(i))) {
-        return false;
-      }
-    }
-    return true;
+    return Strings.isBlank(str);
   }
   /**
    * 是否不为空白
@@ -262,19 +253,6 @@ public class Objects {
    * @return 是否不为空白
    */
   public static boolean nonBlank(@Nullable CharSequence str) {
-    return !isBlank(str);
-  }
-  /**
-   * 是否空白符 空白符包括空格、制表符、全角空格和不间断空格
-   *
-   * @param c 字符
-   * @return 是否空白符
-   */
-  private static boolean isBlankChar(char c) {
-    return Character.isWhitespace(c)
-        || Character.isSpaceChar(c)
-        || c == '\ufeff'
-        || c == '\u202a'
-        || c == '\u0000';
+    return Strings.nonBlank(str);
   }
 }
