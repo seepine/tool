@@ -91,9 +91,6 @@ public class AES {
     try {
       byte[] dataBytes = src.getBytes(StandardCharsets.UTF_8);
       if (hasIv) {
-        byte[] encrypted = encryptCipher.doFinal(dataBytes);
-        return Base64.encode(encrypted);
-      } else {
         int plaintextLength = dataBytes.length;
         if (plaintextLength % blockSize != 0) {
           plaintextLength = plaintextLength + (blockSize - (plaintextLength % blockSize));
@@ -101,6 +98,9 @@ public class AES {
         byte[] plaintext = new byte[plaintextLength];
         System.arraycopy(dataBytes, 0, plaintext, 0, dataBytes.length);
         byte[] encrypted = encryptCipher.doFinal(plaintext);
+        return Base64.encode(encrypted);
+      } else {
+        byte[] encrypted = encryptCipher.doFinal(dataBytes);
         return Base64.encode(encrypted);
       }
     } catch (Exception e) {
