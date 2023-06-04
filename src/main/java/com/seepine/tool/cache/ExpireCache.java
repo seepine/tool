@@ -1,7 +1,7 @@
 package com.seepine.tool.cache;
 
 import com.seepine.tool.function.NonnullSupplier;
-import com.seepine.tool.util.CurrentTimeMillis;
+import com.seepine.tool.time.CurrentTimeMillis;
 import com.seepine.tool.util.Validate;
 
 import javax.annotation.Nonnegative;
