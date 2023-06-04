@@ -102,4 +102,9 @@ public class R<T> implements Serializable {
     res.setMsg(msg);
     return res;
   }
+
+  @Override
+  public String toString() {
+    return "R{" + "code=" + code + ", msg='" + msg + '\'' + ", data=" + data + '}';
+  }
 }
