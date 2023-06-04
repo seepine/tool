@@ -16,6 +16,8 @@ import java.util.function.Supplier;
  * @since 0.2.0
  */
 public class Cache {
+  public static final long FOREVER = 0;
+
   private Cache() {
     throw new AssertionError("No com.seepine.tool.cache.Cache instances for you!");
   }
@@ -61,14 +63,14 @@ public class Cache {
    */
   @Nonnull
   public static <T> T get(@Nonnull String key, @Nonnull NonnullSupplier<T> supplier) {
-    return get(key, supplier, ExpireCache.FOREVER_FLAG);
+    return get(key, supplier, FOREVER);
   }
   /**
    * 获取缓存
    *
    * @param key key
    * @param defaultValue 当缓存为null时，将会返回该值并保存到缓存中
-   * @param delayMillisecond 过期时间，毫秒
+   * @param delayMillisecond 过期时间(毫秒),0为无限期
    * @return 值
    */
   @Nonnull
@@ -81,7 +83,7 @@ public class Cache {
    *
    * @param key key
    * @param supplier 当缓存为null时，将会返回该值并保存到缓存中
-   * @param delayMillisecond 过期时间，毫秒
+   * @param delayMillisecond 过期时间(毫秒),0为无限期
    * @return 值
    */
   @Nonnull
@@ -103,13 +105,12 @@ public class Cache {
   /**
    * 获取缓存，提供获取供应者，且当供应者提供值时，才缓存
    *
-   * <p>String str = Cache.getIfPresent("cacheKey", ()-> null , 5000) // 返回null，且不会缓存
-   *
-   * <p>String str = Cache.getIfPresent("cacheKey", ()-> "cacheValue" , 5000) // 返回cacheValue，且会缓存值
-   *
+   * @code String str = Cache.getIfPresent("cacheKey", ()-> null , 5000) // 返回null，且不会缓存
+   * @code String str = Cache.getIfPresent("cacheKey", ()-> "cacheValue" , 5000) //
+   *     返回cacheValue，且会缓存值
    * @param key key
    * @param supplier 当缓存为null时，将会返回该值并保存到缓存中
-   * @param delayMillisecond 过期时间，毫秒
+   * @param delayMillisecond 过期时间(毫秒),0为无限期
    * @return 值
    * @since 2.2.4
    */
@@ -117,7 +118,7 @@ public class Cache {
   public static <T> T getIfPresent(
       @Nonnull String key, @Nonnull Supplier<T> supplier, @Nonnegative long delayMillisecond) {
     return Lock.sync(
-        key,
+        "cache:getIfPresent:" + key,
         () -> {
           T value = get(key);
           if (Objects.isNull(value)) {
@@ -182,7 +183,7 @@ public class Cache {
    * @param value value
    */
   public static void set(@Nonnull String key, @Nonnull Object value) {
-    cache.set(key, value, ExpireCache.FOREVER_FLAG);
+    cache.set(key, value, FOREVER);
   }
 
   /**
@@ -190,7 +191,7 @@ public class Cache {
    *
    * @param key key
    * @param value value
-   * @param delayMillisecond 过期时间(毫秒)
+   * @param delayMillisecond 过期时间(毫秒),0为无限期
    */
   public static void set(
       @Nonnull String key, @Nonnull Object value, @Nonnegative long delayMillisecond) {
