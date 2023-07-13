@@ -181,7 +181,7 @@ public class Cache {
    * @param pattern 规则值
    * @return 删除个数
    */
-  long removeByPattern(@Nonnull String pattern) {
+  public static long removeByPattern(@Nonnull String pattern) {
     return cache.removeByPattern(pattern);
   }
 
