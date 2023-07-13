@@ -1,5 +1,6 @@
 package com.seepine.tool.cache;
 
+import com.seepine.tool.exception.RunException;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,5 +29,10 @@ public class CacheMemoryImpl implements CacheService {
   @Override
   public Object remove(@Nonnull String key) {
     return expireCache.remove(key);
+  }
+
+  @Override
+  public long removeByPattern(@Nonnull String pattern) {
+    throw new RunException("默认的内存缓存不支持按规则删除，可通过 Cache.enhance 去借助例如redisson实现");
   }
 }

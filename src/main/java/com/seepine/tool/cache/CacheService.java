@@ -18,9 +18,29 @@ public interface CacheService {
    */
   void set(@Nonnull String key, @Nonnull Object value, @Nonnegative long delayMillisecond);
 
+  /**
+   * 获取缓存
+   *
+   * @param key 缓存key
+   * @return 缓存值
+   */
   @Nullable
   Object get(@Nonnull String key);
 
+  /**
+   * 移除缓存
+   *
+   * @param key 缓存key
+   * @return 缓存值
+   */
   @Nullable
   Object remove(@Nonnull String key);
+
+  /**
+   * 按规则删除，例如 dept*，删除所有dept开头的缓存
+   *
+   * @param pattern 规则值
+   * @return 删除个数
+   */
+  long removeByPattern(@Nonnull String pattern);
 }

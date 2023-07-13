@@ -3,11 +3,10 @@ package com.seepine.tool.cache;
 import com.seepine.tool.function.NonnullSupplier;
 import com.seepine.tool.lock.Lock;
 import com.seepine.tool.util.Objects;
-
+import java.util.function.Supplier;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
 /**
  * 缓存工具类
@@ -174,6 +173,16 @@ public class Cache {
   @Nullable
   public static Object remove(@Nonnull String key) {
     return cache.remove(key);
+  }
+
+  /**
+   * 按规则删除，例如 dept*，删除所有dept开头的缓存
+   *
+   * @param pattern 规则值
+   * @return 删除个数
+   */
+  long removeByPattern(@Nonnull String pattern) {
+    return cache.removeByPattern(pattern);
   }
 
   /**
