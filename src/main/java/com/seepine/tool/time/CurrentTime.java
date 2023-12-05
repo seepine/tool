@@ -6,8 +6,8 @@ import java.time.ZoneId;
 
 public class CurrentTime {
 
-  public static long startNanoTime = System.currentTimeMillis() * 1_000_000;
-  public static long startNano = System.nanoTime();
+  private static long startNanoTime = 0;
+  private static long startNano = 0;
 
   /**
    * 获取纳秒
@@ -15,6 +15,12 @@ public class CurrentTime {
    * @return nano
    */
   public static long nano() {
+    if (startNanoTime == 0) {
+      startNanoTime = System.currentTimeMillis() * 1_000_000;
+    }
+    if (startNano == 0) {
+      startNano = System.nanoTime();
+    }
     return startNanoTime + System.nanoTime() - startNano;
   }
 
