@@ -3,12 +3,14 @@ package com.seepine.tool.cache;
 import com.seepine.tool.function.NonnullSupplier;
 import com.seepine.tool.time.CurrentTimeMillis;
 import com.seepine.tool.util.Validate;
-
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
-import java.util.concurrent.*;
 
 /**
  * 过期缓存
@@ -17,12 +19,15 @@ import java.util.concurrent.*;
  */
 public class ExpireCache<T> {
   private final ConcurrentMap<String, DelayValue<T>> map = new ConcurrentHashMap<>();
+
   /** 2-6个核心 */
   private static final ScheduledExecutorService EXECUTOR =
       Executors.newScheduledThreadPool(
           Math.min(Math.max(Runtime.getRuntime().availableProcessors(), 2), 6));
+
   /** 永久缓存标记 */
   public static final long FOREVER_FLAG = 0;
+
   /**
    * 获取缓存数量
    *
@@ -46,6 +51,27 @@ public class ExpireCache<T> {
     }
     return delayValue.isExpired() ? null : delayValue.data;
   }
+
+  public int removeAll() {
+    int num = map.size();
+    map.clear();
+    return num;
+  }
+
+  /**
+   * 按规则删除，例如 dept*，删除所有dept开头的缓存
+   *
+   * @param regex 规则值，例如a*
+   * @return 删除个数
+   */
+  public int removeByPattern(@Nonnull String regex) {
+    Pattern pattern = Pattern.compile(regex.endsWith("*") ? regex.replace("*", ".*") : regex);
+    Set<String> keys =
+        map.keySet().stream().filter(k -> pattern.matcher(k).matches()).collect(Collectors.toSet());
+    keys.forEach(this::remove);
+    return keys.size();
+  }
+
   /**
    * key是否存在
    *
@@ -55,6 +81,7 @@ public class ExpireCache<T> {
   public boolean containsKey(@Nonnull String key) {
     return map.containsKey(key);
   }
+
   /**
    * 放入一个不过期 k v
    *
@@ -95,6 +122,7 @@ public class ExpireCache<T> {
     }
     return v.isExpired() ? null : v.data;
   }
+
   /**
    * 取值,若为null则赋值默认值
    *
@@ -105,6 +133,7 @@ public class ExpireCache<T> {
   public T get(@Nonnull String key, @Nonnull T defaultValue) {
     return get(key, () -> defaultValue, FOREVER_FLAG);
   }
+
   /**
    * 取值,若为null则赋值默认值
    *
@@ -115,6 +144,7 @@ public class ExpireCache<T> {
   public T get(@Nonnull String key, @Nonnull NonnullSupplier<T> func) {
     return get(key, func, FOREVER_FLAG);
   }
+
   /**
    * 取值，若为null则赋值默认值及过期毫秒
    *

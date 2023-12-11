@@ -1,7 +1,6 @@
 package com.seepine.tool.test.cache;
 
 import com.seepine.tool.cache.ExpireCache;
-
 import java.util.concurrent.TimeUnit;
 
 public class ExpireCacheTest {
@@ -27,5 +26,14 @@ public class ExpireCacheTest {
     } catch (InterruptedException ignore) {
     }
     System.out.println(cache.get("pig"));
+
+    cache.removeAll();
+    cache.put("abc", "abc");
+    cache.put("abb", "abb");
+    cache.put("acc", "acc");
+    System.out.println("cache size:" + cache.size());
+    int count = cache.removeByPattern("ab*");
+    System.out.println("remove size:" + count);
+    System.out.println("cache size:" + cache.size());
   }
 }
