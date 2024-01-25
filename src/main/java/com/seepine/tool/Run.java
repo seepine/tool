@@ -1,7 +1,9 @@
 package com.seepine.tool;
 
+import com.seepine.tool.exception.ValidateRunException;
 import com.seepine.tool.function.NonnullConsumer;
 import com.seepine.tool.util.Objects;
+import com.seepine.tool.util.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -110,5 +112,30 @@ public class Run {
     if (Objects.nonBlank(str)) {
       consumer.accept(str.trim());
     }
+  }
+
+  @Deprecated
+  public static void notEmpty(@Nullable Object obj, @Nonnull Runnable action) {
+    nonEmpty(obj, action);
+  }
+
+  @Deprecated
+  public static <T> void notEmpty(@Nullable T obj, @Nonnull NonnullConsumer<T> consumer) {
+    nonEmpty(obj, consumer);
+  }
+
+  @Deprecated
+  public static void notBlank(@Nullable String str, @Nonnull NonnullConsumer<String> consumer) {
+    nonBlank(str, consumer);
+  }
+
+  @Deprecated
+  public static void isTrue(boolean condition, @Nonnull String tip) throws ValidateRunException {
+    Validate.isTrue(condition, tip);
+  }
+
+  @Deprecated
+  public static void isFalse(boolean condition, @Nonnull String tip) throws ValidateRunException {
+    Validate.isFalse(condition, tip);
   }
 }
