@@ -130,7 +130,7 @@ public class Run {
   }
 
   @Deprecated
-  public static String nonBlank(@Nullable String str, @Nonnull String tip) {
+  public static String notBlank(@Nullable String str, @Nonnull String tip) {
     return Validate.nonBlank(str, tip);
   }
 
