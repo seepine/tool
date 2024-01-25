@@ -115,6 +115,11 @@ public class Run {
   }
 
   @Deprecated
+  public static <T> T notEmpty(@Nullable T o, @Nonnull String tip) throws ValidateRunException {
+    return Validate.nonEmpty(o, tip);
+  }
+
+  @Deprecated
   public static void notEmpty(@Nullable Object obj, @Nonnull Runnable action) {
     nonEmpty(obj, action);
   }
@@ -122,6 +127,11 @@ public class Run {
   @Deprecated
   public static <T> void notEmpty(@Nullable T obj, @Nonnull NonnullConsumer<T> consumer) {
     nonEmpty(obj, consumer);
+  }
+
+  @Deprecated
+  public static String nonBlank(@Nullable String str, @Nonnull String tip) {
+    return Validate.nonBlank(str, tip);
   }
 
   @Deprecated
