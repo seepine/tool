@@ -19,6 +19,8 @@ public class Strings {
   public static final String COLON = ":";
   public static final String COMMA = ",";
   public static final String DASHED = "-";
+  public static final String EQUAL = "=";
+  public static final String POUND = "#";
   public static final String UNDERLINE = "_";
   public static final String SLASH = "/";
   public static final String ZERO = "0";
