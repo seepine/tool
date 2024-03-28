@@ -3,6 +3,7 @@ package com.seepine.tool.secure.symmetric;
 import com.seepine.tool.exception.CryptoException;
 import com.seepine.tool.secure.Mode;
 import com.seepine.tool.secure.Padding;
+import com.seepine.tool.util.HexUtil;
 import com.seepine.tool.util.Strings;
 import com.seepine.tool.util.Validate;
 
@@ -117,6 +118,48 @@ public class AES {
   public String decrypt(String ciphertext) throws CryptoException {
     try {
       byte[] encrypted1 = Base64.decodeByte(ciphertext);
+      byte[] original = decryptCipher.doFinal(encrypted1);
+      return Strings.toString(original);
+    } catch (Exception e) {
+      throw new CryptoException(e);
+    }
+  }
+
+  /**
+   * 加密
+   *
+   * @param src 数据
+   * @return 密文
+   */
+  public String encryptHex(String src) throws CryptoException {
+    try {
+      byte[] dataBytes = src.getBytes(StandardCharsets.UTF_8);
+      if (hasIv) {
+        int plaintextLength = dataBytes.length;
+        if (plaintextLength % blockSize != 0) {
+          plaintextLength = plaintextLength + (blockSize - (plaintextLength % blockSize));
+        }
+        byte[] plaintext = new byte[plaintextLength];
+        System.arraycopy(dataBytes, 0, plaintext, 0, dataBytes.length);
+        byte[] encrypted = encryptCipher.doFinal(plaintext);
+        return HexUtil.encodeHexStr(encrypted);
+      } else {
+        byte[] encrypted = encryptCipher.doFinal(dataBytes);
+        return HexUtil.encodeHexStr(encrypted);
+      }
+    } catch (Exception e) {
+      throw new CryptoException(e);
+    }
+  }
+  /**
+   * 解密
+   *
+   * @param ciphertext 密文
+   * @return 数据
+   */
+  public String decryptHex(String ciphertext) throws CryptoException {
+    try {
+      byte[] encrypted1 = HexUtil.decodeHex(ciphertext);
       byte[] original = decryptCipher.doFinal(encrypted1);
       return Strings.toString(original);
     } catch (Exception e) {
